@@ -28,10 +28,21 @@
 #   Initial API and implementation - Alex McCaskey
 #
 #**********************************************************************************/
-add_subdirectory(scaffold)
-add_subdirectory(quil)
+set (PACKAGE_NAME "Quil XACC Runtime")
+set (PACKAGE_DESCIPTION "Quil XACC Programming Framework")
+set (LIBRARY_NAME xacc-quil)
+
+file (GLOB HEADERS *.hpp)
+file (GLOB SRC *.cpp)
+
+include_directories(${CMAKE_SOURCE_DIR}/quantum/gate)
+
+add_library(${LIBRARY_NAME} SHARED ${SRC})
+
+install(FILES ${HEADERS} DESTINATION include)
+install(TARGETS ${LIBRARY_NAME} DESTINATION lib)
 
 # Gather tests
-#file (GLOB test_files tests/*.cpp)
-#add_tests("${test_files}" "${CMAKE_CURRENT_SOURCE_DIR}/utils;${CMAKE_CURRENT_SOURCE_DIR}" "${Boost_LIBRARIES}")
+file (GLOB test_files tests/*.cpp)
+add_tests("${test_files}" "${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_SOURCE_DIR}/quantum/gate/utils" "${LIBRARY_NAME};${PYTHON_LIBRARIES};${Boost_LIBRARIES}")
 
