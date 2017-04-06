@@ -47,22 +47,31 @@ void QuilCompiler::modifySource() {
 	auto endFuncTotal = kernelSource.find_first_of("}");
 	auto quilCode = kernelSource.substr(endFuncLine+1, (endFuncTotal - endFuncLine) - 1);
 
-	quilCode = "from pyquil.quil import Program\nfrom pyquil.gates import *\n" + quilCode + "qasm = p.out()";
+	for (auto it = typeToVarKernelArgs.begin(); it != typeToVarKernelArgs.end(); ++it) {
+		std::cout << "HELLOWORLD: " << it->first << ", " << it->second << "\n";
+	}
+
+	quilCode = "import math\nfrom pyquil.quil import Program\nfrom pyquil.gates import *\n" + quilCode + "qasm = p.out()";
+
+	kernelSource = quilCode;
+}
+
+std::shared_ptr<IR> QuilCompiler::compile() {
+
+	using QuilGraphIR = GraphIR<QuantumCircuit>;
 
 	using namespace boost::python;
 
 	Py_Initialize();
 	// Retrieve the main module.
 	object main = import("__main__");
-
-	// Retrieve the main module's namespace
 	object main_namespace = main.attr("__dict__");
 
-	std::cout << "Code:\n" << quilCode << "\n";
+	std::cout << "Code:\n" << kernelSource << "\n";
 
 	try {
-	exec(quilCode.c_str(), main_namespace);
-	} catch(boost::python::error_already_set e) {
+		exec(kernelSource.c_str(), main_namespace);
+	} catch (boost::python::error_already_set e) {
 		PyErr_Print();
 	}
 
@@ -71,12 +80,6 @@ void QuilCompiler::modifySource() {
 	Py_Finalize();
 
 	std::cout << "THE QASM STR: \n" << qasm << "\n";
-}
-
-std::shared_ptr<IR> QuilCompiler::compile() {
-
-	using QuilGraphIR = GraphIR<QuantumCircuit>;
-
 
 	// Create a GraphIR instance from that graph
 	auto graphIR = std::make_shared<QuilGraphIR>();

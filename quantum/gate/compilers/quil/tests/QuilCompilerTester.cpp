@@ -63,8 +63,7 @@ BOOST_AUTO_TEST_CASE(checkSimpleCompile) {
 BOOST_AUTO_TEST_CASE(checkComplex_QFT) {
 	using GraphType = QuantumCircuit;
 
-	const std::string src("__qpu__ qftKernel(qbit qreg) {\n"
-		"import math\n"
+	const std::string src("__qpu__ qftKernel(qbit qubits) {\n"
 		"def bit_reversal(qubits):\n"
 		"    p = Program()\n"
 		"    n = len(qubits)\n"
@@ -84,10 +83,10 @@ BOOST_AUTO_TEST_CASE(checkComplex_QFT) {
 		"            angle = math.pi / 2 ** (n - i)\n"
 		"            cR.append(CPHASE(coeff * angle)(q, q_idx))\n"
 		"        return _core_qft(qs, coeff) + list(reversed(cR)) + [H(q)]\n"
-		"def qft(qubits):\n"
-		"    p = Program().inst(_core_qft(qubits, 1))\n"
-		"    return p + bit_reversal(qubits)\n"
-		"p = qft([0,1,2,3,4,5,6])\n"
+		"\n"
+		"qubits = [0,1,2,3,4,5,6]\n"
+		"p = Program().inst(_core_qft(qubits, 1))\n"
+		"p = p + bit_reversal(qubits)\n"
 		"}\n");
 
 	auto compiler = qci::common::AbstractFactory::createAndCast<xacc::ICompiler>("compiler", "quil");
