@@ -39,19 +39,39 @@
 namespace xacc {
 
 /**
+ * This is the base class for all Instruction
+ * Visitor implementations. If you want to create
+ * a visitor, you must inherit from this class.
  */
 class BaseInstructionVisitor {
 public:
 	virtual ~BaseInstructionVisitor() {}
 };
 
+/**
+ * Implementations of BaseInstructionVisitor must
+ * inherit from this template class in order to specify
+ * the actual Instruction subclasses they would like to
+ * visit.
+ */
 template<class T>
 class InstructionVisitor {
 public:
+
+	/**
+	 * The visit method to be called by
+	 * specialized Instructions
+	 * @param T The instruction instances of type T
+	 */
 	virtual void visit(T&) = 0;
 	virtual ~InstructionVisitor() {}
 };
 
+/**
+ * All Instruction specializations that need to be visited by concrete
+ * InstructionVisitors must invoke the DEFINE_VISITABLE macro in the
+ * public scope of their class definition.
+ */
 class BaseInstructionVisitable {
 public:
 	virtual void accept(std::shared_ptr<BaseInstructionVisitor> visitor) = 0;
@@ -73,42 +93,61 @@ protected:
 };
 
 /**
- *
+ * The Instruction interface is the base for all executable
+ * Accelerator instructions in the XACC specification. It provides
+ * an abstraction to describe the instructions unique name and the
+ * accelerator bits it operates on.
  */
 class Instruction : public BaseInstructionVisitable {
 
 public:
 
 	/**
-	 *
+	 * Return the unique name of this Instruction
 	 * @return
 	 */
 	virtual const std::string getName() = 0;
 
 	/**
+	 * Return this instruction definition as a string.
 	 *
 	 * @return
 	 */
 	virtual const std::string toString(const std::string& bufferVarName) = 0;
 
 	/**
+	 * Return the accelerator bits that this instruction
+	 * operates on.
 	 *
 	 * @return
 	 */
 	virtual const std::vector<int> bits() = 0;
 
+	/**
+	 * Return true if this Instruction contains other
+	 * instructions as part of its definition.
+	 * @return
+	 */
 	virtual bool isComposite() { return false; }
 
+	/**
+	 * Return if this instruction is enabled, ie,
+	 * should be executed.
+	 *
+	 * @return
+	 */
 	virtual bool isEnabled() { return true; }
 
+	/**
+	 * Disable this instruction.
+	 *
+	 */
 	virtual void disable() {}
-	virtual void enable() {}
 
 	/**
-	 *
-	 * @param visitor
+	 * Enable this instruction
 	 */
-//	virtual void accept(std::shared_ptr<InstructionVisitor> visitor) = 0;
+	virtual void enable() {}
 
 	/**
 	 * The destructor

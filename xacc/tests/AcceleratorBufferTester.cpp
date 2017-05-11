@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright (c) 2017, UT-Battelle
+ * Copyright (c) 2016, UT-Battelle
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,91 +28,31 @@
  *   Initial API and implementation - Alex McCaskey
  *
  **********************************************************************************/
-#ifndef XACC_ACCELERATOR_ACCELERATORBUFFER_HPP_
-#define XACC_ACCELERATOR_ACCELERATORBUFFER_HPP_
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MODULE AccBufferTester
 
-#include <string>
-#include <iostream>
-#include "Utils.hpp"
+#include <boost/test/included/unit_test.hpp>
+#include "AcceleratorBuffer.hpp"
 
-enum class AcceleratorBitState {ZERO, ONE, UNKNOWN};
-class AcceleratorBit {
-public:
-	AcceleratorBit() : state(AcceleratorBitState::UNKNOWN), index(0) {}
-	AcceleratorBitState state;
-	int index;
-};
+using namespace xacc;
 
-/**
- *
- * @author Alex McCaskey
- */
-class AcceleratorBuffer {
 
-public:
+BOOST_AUTO_TEST_CASE(checkCreateBufferBitIndices) {
 
-	AcceleratorBuffer(const std::string& str) :
-			bufferId(str), bits(std::vector<AcceleratorBit> { }) {
+	int counter = 0;
+	auto buf = std::make_shared<AcceleratorBuffer>("name", 6);
+	for (auto it = buf->begin(); it != buf->end(); ++it) {
+		BOOST_VERIFY(it->index == counter);
+		BOOST_VERIFY(it->state == AcceleratorBitState::UNKNOWN);
+		counter++;
 	}
 
-	AcceleratorBuffer(const std::string& str, const int N) :
-			bufferId(str), bits(std::vector<AcceleratorBit>(N)) {
-		for (int i = 0; i < N; i++) {
-			bits[i].index = i;
-		}
+	counter = 3;
+	AcceleratorBuffer b2("n", {3,4,5});
+	for (auto it = b2.begin(); it != b2.end(); ++it) {
+		BOOST_VERIFY(it->index == counter);
+		counter++;
 	}
 
-	AcceleratorBuffer(const std::string& str,
-			std::initializer_list<int> indexList) :
-			bufferId(str), bits(std::vector<AcceleratorBit>(indexList.size())) {
-		int counter = 0;
-		for (auto i : indexList) {
-			bits[counter].index = i;
-			counter++;
-		}
-	}
 
-	auto begin() {
-		return bits.begin();
-	}
-
-	auto end() {
-		return bits.end();
-	}
-
-	int size() {
-		return bits.size();
-	}
-
-	std::string name() {
-		return bufferId;
-	}
-
-	void resetBuffer() {
-	}
-
-	void updateBit(const int idx, int zeroOrOne) {
-		bits[idx].state = (zeroOrOne == 0 ? AcceleratorBitState::ZERO : AcceleratorBitState::ONE);
-	}
-
-	AcceleratorBitState getAcceleratorBitState(const int idx) {
-		return bits[idx].state;
-	}
-
-	virtual void print() {
-	}
-	virtual void print(std::ostream& stream) {
-	}
-
-	virtual ~AcceleratorBuffer() {}
-
-protected:
-
-	std::string bufferId;
-
-	std::vector<AcceleratorBit> bits;
-
-};
-
-
-#endif
+}

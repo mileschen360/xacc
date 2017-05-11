@@ -137,6 +137,37 @@ std::shared_ptr<IR> ScaffoldCompiler::compile(const std::string& src,
 	// Give the function to the IR
 	qir->addKernel(qirFunction);
 
+	// A Function is going to describe its qubits with indices
+	// 0 to N, which may be different from the AcceleratorBuffer's
+	// bit indices. So we should update the Instruction bits to
+	// the appropriate Accelerator Bit indices.
+
+	// How many qubits does this function act on???
+	// If we know that number, then we can create a
+	// mapping between the accelerator buffer accelerator
+	// bit indices and those {0,1,2,...} indexed qubits.
+	std::set<int> qubitsUsed;
+	InstructionIterator it(qirFunction);
+	while (it.hasNext()) {
+		// Get the next node in the tree
+		auto nextInst = it.next();
+
+		// If enabled, invoke the accept
+		// method which kicks off the visitor
+		// to execute the appropriate lambda.
+		if (!nextInst->isComposite()) {
+
+			for (auto qi : nextInst->bits()) {
+				qubitsUsed.insert(qi);
+			}
+		}
+	}
+
+	int nQubitsUsed = qubitsUsed.size();
+
+
+
+
 	// Return...
 	return qir;
 }
@@ -169,7 +200,6 @@ std::shared_ptr<IR> ScaffoldCompiler::compile(const std::string& src) {
 
 	auto qir = std::make_shared<GateQIR>();
 
-	std::cout << "HELLO WORLD ADDING : " << qirFunction->getName() << "\n";
 	qir->addKernel(qirFunction);
 
 	return qir;
@@ -178,5 +208,5 @@ std::shared_ptr<IR> ScaffoldCompiler::compile(const std::string& src) {
 }
 
 }
-static xacc::RegisterCompiler<xacc::quantum::ScaffoldCompiler> X(
+static xacc::RegisterCompiler<xacc::quantum::ScaffoldCompiler> SCAFFOLDTEMP(
 		"scaffold");

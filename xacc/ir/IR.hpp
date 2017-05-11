@@ -48,8 +48,6 @@ namespace xacc {
  */
 class IR {
 
-protected:
-
 public:
 
 	/**
@@ -57,7 +55,8 @@ public:
 	 * intermediate representation
 	 * @return
 	 */
-	virtual std::string toAssemblyString(const std::string& kernelName, const std::string& accBufferVarName) = 0;
+	virtual std::string toAssemblyString(const std::string& kernelName,
+			const std::string& accBufferVarName) = 0;
 
 	/**
 	 * Persist this IR instance to the given
@@ -75,8 +74,19 @@ public:
 	 */
 	virtual void load(std::istream& inStream) = 0;
 
+	/**
+	 *
+	 * @param kernel
+	 */
 	virtual void addKernel(std::shared_ptr<Function> kernel) = 0;
+
+	/**
+	 *
+	 * @param name
+	 * @return
+	 */
 	virtual std::shared_ptr<Function> getKernel(const std::string& name) = 0;
+
 	/**
 	 * The destructor
 	 */
