@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['instance_5f',['instance_',['../a01207.html#a863885efab9990f06f699567648dfa26',1,'xacc::Singleton']]],
-  ['inststack',['instStack',['../a01135.html#a7af48509e563e8865131692c3b71edf0',1,'xacc::InstructionIterator']]]
+  ['gatename',['gateName',['../a00041.html#a9961e6979139ced70300188cf2e4ad3f',1,'xacc::quantum::GateInstruction']]]
 ];

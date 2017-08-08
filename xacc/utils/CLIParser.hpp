@@ -33,11 +33,10 @@
 
 #include <memory>
 #include <string>
-#include <boost/dll.hpp>
 #include <boost/program_options.hpp>
 #include "RuntimeOptions.hpp"
 #include "xacc_config.hpp"
-#include "Preprocessor.hpp"
+#include "ServiceRegistry.hpp"
 
 using namespace boost::program_options;
 
@@ -57,165 +56,59 @@ class CLIParser {
 
 protected:
 
-	/**
-	 * Argc, number of arguments
-	 */
-	int argc;
-
-	/**
-	 * Argv, the command line arguments
-	 */
-	char** argv;
+	std::shared_ptr<options_description> xaccOptions;
 
 public:
 
 	/**
 	 * The constructor
 	 */
-	CLIParser(int arc, char** arv) : argc(arc), argv(arv) {}
+	CLIParser() :
+			 xaccOptions(
+					std::make_shared<options_description>("XACC Options")) {
+		xaccOptions->add_options()
+						("help", "Help Message")
+						("compiler",value<std::string>()->default_value("scaffold"),"Indicate the compiler to be used.")
+						("persist-ir",value<std::string>(), "Persist generated IR to provided file name.")
+						("load", value<std::string>(), "Load a XACC plugin at the given path")
+						("list-compilers", "List all available XACC Compilers")
+						("list-accelerators", "List all available XACC Accelerators");
+	}
 
 	/**
-	 * Parse the command line options. Provide a Boost options_description
-	 * built up and provided by all available OptionsProviders. This
-	 * method also loads all Compilers and Accelerators available
-	 * in the XACC_INSTALL_DIR.
 	 */
-	void parse() {
+	void parse(int argc, char** argv) {
 
 		// Get a reference to the RuntimeOptions
 		auto runtimeOptions = RuntimeOptions::instance();
 
-		auto inst = PreprocessorRegistry::instance();
+		auto registeredOptions = ServiceRegistry::instance()->getRegisteredOptions();
 
-		// Create a base options_description, we will add
-		// to this with all OptionsProviders
-		auto compilerOptions = std::make_shared<options_description>(
-				"XACC Options");
-		compilerOptions->add_options()
-				("help", "Help Message")
-				("compiler",value<std::string>()->default_value("scaffold"),"Indicate the compiler to be used.")
-				("persist-ir",value<std::string>(), "Persist generated IR to provided file name.")
-				("load-compiler", value<std::string>(), "Load a XACC plugin")
-				("load-accelerator", value<std::string>(), "Load an XACC Accelerator")
-				("list-compilers", "List all available XACC Compilers")
-				("list-accelerators", "List all available XACC Accelerators");
-
-		// Load all default Compilers and Accelerators,
-		// ie those in XACC INSTALL DIR/lib
-		boost::filesystem::path xaccPath(
-				std::string(XACC_INSTALL_DIR) + std::string("/lib"));
-		if (boost::filesystem::exists(xaccPath)) {
-			boost::filesystem::directory_iterator end_itr;
-
-			// cycle through the directory
-			for (boost::filesystem::directory_iterator itr(xaccPath);
-					itr != end_itr; ++itr) {
-				auto p = itr->path();
-				if (p.extension() == ".so") {
-					namespace dll = boost::dll;
-					dll::shared_library lib(p,
-							dll::load_mode::append_decorations);
-					if (lib.has("registerCompiler")) {
-						typedef void (RegisterCompiler)();
-						auto regFunc =
-								boost::dll::import_alias<RegisterCompiler>(p,
-										"registerCompiler",
-										dll::load_mode::append_decorations);
-						regFunc();
-					}
-					if (lib.has("registerAccelerator")) {
-						typedef void (RegisterAccelerator)();
-						auto regFunc = boost::dll::import_alias<
-								RegisterAccelerator>(p, "registerAccelerator",
-								dll::load_mode::append_decorations);
-						regFunc();
-					}
-					if (lib.has("registerEmbeddingAlgorithm")) {
-						typedef void (RegisterEmbeddingAlgorithm)();
-						auto regFunc = boost::dll::import_alias<
-								RegisterEmbeddingAlgorithm>(p,
-								"registerEmbeddingAlgorithm",
-								dll::load_mode::append_decorations);
-						regFunc();
-					}
-//					if (lib.has("registerPreprocessor")) {
-//						typedef void (RegisterPreprocessor)();
-//						auto regFunc = boost::dll::import_alias<
-//								RegisterPreprocessor>(p,
-//								"registerPreprocessor",
-//								dll::load_mode::append_decorations);
-//						regFunc();
-//					}
-				}
-			}
-		}
-
-		// Add Accelerator specific options
-		auto registeredIds = AcceleratorRegistry::instance()->getRegisteredIds();
-		for (auto s : registeredIds) {
-			{
-				compilerOptions->add(
-						*(AcceleratorRegistry::instance()->create(s)->getOptions().get()));
-			}
-		}
-
-		// Add all Compiler specific options
-		registeredIds = CompilerRegistry::instance()->getRegisteredIds();
-		for (auto s : registeredIds) {
-			{
-				compilerOptions->add(
-						*(CompilerRegistry::instance()->create(s)->getOptions().get()));
-			}
+		for (auto s : registeredOptions) {
+			xaccOptions->add(*s.get());
 		}
 
 		// Parse the command line options
 		variables_map clArgs;
-		store(parse_command_line(argc, argv, *compilerOptions.get()), clArgs);
+		store(parse_command_line(argc, argv, *xaccOptions.get()), clArgs);
 		if (clArgs.count("help")) {
-			std::cout << *compilerOptions.get() << "\n";
+			std::cout << *xaccOptions.get() << "\n";
 			XACCInfo(
 					"\n[xacc] XACC Finalizing\n[xacc::compiler] Cleaning up Compiler Registry."
 							"\n[xacc::accelerator] Cleaning up Accelerator Registry.");
-			xacc::CompilerRegistry::instance()->destroy();
-			xacc::AcceleratorRegistry::instance()->destroy();
 			exit(0);
 		}
 
 		// If the user provides a path to a compiler plugin,
 		// then load it
-		if (clArgs.count("load-compiler")) {
+		if (clArgs.count("load")) {
 			auto loadPath = clArgs["load-compiler"].as<std::string>();
-			boost::filesystem::path p(loadPath);
-			namespace dll = boost::dll;
-			dll::shared_library lib(p, dll::load_mode::append_decorations);
-			if (lib.has("registerCompiler")) {
-				typedef void (RegisterCompiler)();
-				auto regFunc = boost::dll::import_alias<RegisterCompiler>(p,
-						"registerCompiler", dll::load_mode::append_decorations);
-				regFunc();
-			}
-			clArgs.erase("load-compiler");
-		}
-
-		// If the user provides a path to a accelerator plugin,
-		// then load it
-		if (clArgs.count("load-accelerator")) {
-			auto loadPath = clArgs["load-accelerator"].as<std::string>();
-			boost::filesystem::path p(loadPath);
-			namespace dll = boost::dll;
-			dll::shared_library lib(p, dll::load_mode::append_decorations);
-			if (lib.has("registerAccelerator")) {
-				typedef void (RegisterAccelerator)();
-				auto regFunc = boost::dll::import_alias<RegisterAccelerator>(p,
-						"registerAccelerator", dll::load_mode::append_decorations);
-				regFunc();
-			}
-			clArgs.erase("load-accelerator");
+			ServiceRegistry::instance()->loadPlugin(loadPath);
 		}
 
 		bool listTypes = false;
 		if (clArgs.count("list-compilers")) {
-			auto ids = CompilerRegistry::instance()->getRegisteredIds();
+			auto ids = ServiceRegistry::instance()->getRegisteredIds<Compiler>();
 			XACCInfo("Available XACC Compilers:");
 			for (auto i : ids) {
 				XACCInfo("\t" + i);
@@ -224,7 +117,7 @@ public:
 		}
 
 		if (clArgs.count("list-accelerators")) {
-			auto ids = AcceleratorRegistry::instance()->getRegisteredIds();
+			auto ids = ServiceRegistry::instance()->getRegisteredIds<Accelerator>();
 			XACCInfo("Available XACC Accelerators:");
 			for (auto i : ids) {
 				XACCInfo("\t" + i);
@@ -236,8 +129,14 @@ public:
 			XACCInfo(
 					"\n[xacc] XACC Finalizing\n[xacc::compiler] Cleaning up Compiler Registry."
 							"\n[xacc::accelerator] Cleaning up Accelerator Registry.");
-			xacc::CompilerRegistry::instance()->destroy();
-			xacc::AcceleratorRegistry::instance()->destroy();
+			exit(0);
+		}
+
+		auto exitRequested = ServiceRegistry::instance()->handleOptions(clArgs);
+		if (exitRequested) {
+			XACCInfo(
+					"\n[xacc] XACC Finalizing\n[xacc::compiler] Cleaning up Compiler Registry."
+							"\n[xacc::accelerator] Cleaning up Accelerator Registry.");
 			exit(0);
 		}
 
@@ -247,6 +146,10 @@ public:
 			runtimeOptions->insert(
 					std::make_pair(it->first, it->second.as<std::string>()));
 		}
+	}
+
+	void addStringOption(const std::string key, const std::string description = "") {
+		xaccOptions->add_options()(key.c_str(), value<std::string>(), description.c_str());
 	}
 
 };

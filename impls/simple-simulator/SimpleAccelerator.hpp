@@ -30,7 +30,6 @@
  **********************************************************************************/
 #ifndef QUANTUM_GATE_ACCELERATORS_SIMPLEACCELERATOR_HPP_
 #define QUANTUM_GATE_ACCELERATORS_SIMPLEACCELERATOR_HPP_
-#include <boost/dll/alias.hpp>
 
 #include "Accelerator.hpp"
 #include "InstructionIterator.hpp"
@@ -40,10 +39,6 @@
 
 namespace xacc {
 namespace quantum {
-
-double sqrt2 = std::sqrt(2.0);
-using ProductList = std::vector<fire::Tensor<2, fire::EigenProvider, std::complex<double>>>;
-using ComplexTensor = fire::Tensor<2, fire::EigenProvider, std::complex<double>>;
 
 /**
  * The SimpleTensorAccelerator is an XACC Accelerator that simulates
@@ -67,6 +62,13 @@ public:
 	 */
 	std::shared_ptr<AcceleratorBuffer> createBuffer(const std::string& varId,
 			const int size);
+
+	virtual void initialize() {
+
+	}
+
+	virtual std::shared_ptr<AcceleratorBuffer> createBuffer(
+				const std::string& varId);
 
 	/**
 	 * Return true if this Accelerator can allocated
@@ -97,17 +99,18 @@ public:
 	 * so return an empty list
 	 * @return
 	 */
-	virtual std::vector<xacc::IRTransformation> getIRTransformations() {
-		std::vector<xacc::IRTransformation> v;
+	virtual std::vector<std::shared_ptr<IRTransformation>> getIRTransformations() {
+		std::vector<std::shared_ptr<IRTransformation>> v;
 		return v;
 	}
 
-	/**
-	 * Register this Accelerator with the framework.
-	 */
-	static void registerAccelerator() {
-		xacc::RegisterAccelerator<xacc::quantum::SimpleAccelerator> SIMPLETEMP(
-				"simple");
+	virtual const std::string name() const {
+		return "simple";
+	}
+
+	virtual const std::string description() const {
+		return "The Simple Accelerator simply builds up the unitary matrix "
+				"associated with the IR to be executed and operates on a state vector.";
 	}
 
 	/**
@@ -116,9 +119,6 @@ public:
 	virtual ~SimpleAccelerator() {}
 
 };
-
-// Create an alias to search for.
-RegisterAccelerator(xacc::quantum::SimpleAccelerator)
 
 }
 }

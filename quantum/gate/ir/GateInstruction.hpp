@@ -141,7 +141,7 @@ public:
 		enabled = true;
 	}
 
-	virtual InstructionParameter getParameter(const int idx) {
+	virtual InstructionParameter getParameter(const int idx) const {
 		if (idx + 1 > parameters.size()) {
 			XACCError("Invalid Parameter requested from Parameterized Gate Instruction.");
 		}
@@ -189,12 +189,13 @@ template<typename T>
 class RegisterGateInstruction {
 public:
 	RegisterGateInstruction(const std::string& name) {
-		GateInstructionRegistry::instance()->add(name,
-				(std::function<
-						std::shared_ptr<xacc::quantum::GateInstruction>(
-								std::vector<int>)>) ([](std::vector<int> qubits) {
+		GateInstructionRegistry::CreatorFunctionPtr f = std::make_shared<
+				GateInstructionRegistry::CreatorFunction>(
+				[](std::vector<int> qubits) {
 					return std::make_shared<T>(qubits);
-				}));
+				});
+
+		GateInstructionRegistry::instance()->add(name, f);
 	}
 };
 

@@ -115,6 +115,8 @@ BOOST_AUTO_TEST_CASE(checkConstruction) {
 	BOOST_VERIFY(3.3 == graph.getVertexProperty<0>(0));
 	graph.setVertexProperty<0>(1, 33.3);
 	BOOST_VERIFY(33.3 == graph.getVertexProperty<0>(1));
+
+	graph.getNeighborList(0);
 }
 
 BOOST_AUTO_TEST_CASE(checkAddVertexWithProperties) {
@@ -183,24 +185,22 @@ BOOST_AUTO_TEST_CASE(checkWrite) {
 
 	std::string expected =
 			"graph G {\n"
-			"{\n"
 			"node [shape=box style=filled]\n"
 			"0 [label=\"bias=1\"];\n"
 			"1 [label=\"bias=2\"];\n"
 			"2 [label=\"bias=3\"];\n"
 			"3 [label=\"bias=4\"];\n"
 			"4 [label=\"bias=5\"];\n"
-			"}\n"
-			"0--1 ;\n"
-			"0--2 ;\n"
-			"0--3 ;\n"
-			"0--4 ;\n"
-			"1--2 ;\n"
-			"1--3 ;\n"
-			"1--4 ;\n"
-			"2--3 ;\n"
-			"2--4 ;\n"
-			"3--4 ;\n"
+			"0--1 [label=\"weight=0.000000\"];\n"
+			"0--2 [label=\"weight=0.000000\"];\n"
+			"0--3 [label=\"weight=0.000000\"];\n"
+			"0--4 [label=\"weight=0.000000\"];\n"
+			"1--2 [label=\"weight=0.000000\"];\n"
+			"1--3 [label=\"weight=0.000000\"];\n"
+			"1--4 [label=\"weight=0.000000\"];\n"
+			"2--3 [label=\"weight=0.000000\"];\n"
+			"2--4 [label=\"weight=0.000000\"];\n"
+			"3--4 [label=\"weight=0.000000\"];\n"
 			"}";
 	complete5.setVertexProperty<0>(0, 1.0);
 	complete5.setVertexProperty<0>(1, 2.0);
@@ -227,24 +227,22 @@ BOOST_AUTO_TEST_CASE(checkWrite) {
 
 	expected =
 				"graph G {\n"
-				"{\n"
 				"node [shape=box style=filled]\n"
 				"0 [label=\"prop1=val1,prop2=1,prop3=1,prop4=1\"];\n"
 				"1 [label=\"prop1=val2,prop2=2,prop3=2,prop4=2\"];\n"
 				"2 [label=\"prop1=val3,prop2=3,prop3=3,prop4=3\"];\n"
 				"3 [label=\"prop1=val4,prop2=4,prop3=4,prop4=4\"];\n"
 				"4 [label=\"prop1=val5,prop2=5,prop3=5,prop4=5\"];\n"
-				"}\n"
-				"0--1 ;\n"
-				"0--2 ;\n"
-				"0--3 ;\n"
-				"0--4 ;\n"
-				"1--2 ;\n"
-				"1--3 ;\n"
-				"1--4 ;\n"
-				"2--3 ;\n"
-				"2--4 ;\n"
-				"3--4 ;\n"
+				"0--1 [label=\"weight=0.000000\"];\n"
+				"0--2 [label=\"weight=0.000000\"];\n"
+				"0--3 [label=\"weight=0.000000\"];\n"
+				"0--4 [label=\"weight=0.000000\"];\n"
+				"1--2 [label=\"weight=0.000000\"];\n"
+				"1--3 [label=\"weight=0.000000\"];\n"
+				"1--4 [label=\"weight=0.000000\"];\n"
+				"2--3 [label=\"weight=0.000000\"];\n"
+				"2--4 [label=\"weight=0.000000\"];\n"
+				"3--4 [label=\"weight=0.000000\"];\n"
 				"}";
 	complete5_4props.setVertexProperty<0>(0, "val1");
 	complete5_4props.setVertexProperty<0>(1, "val2");
@@ -304,15 +302,13 @@ BOOST_AUTO_TEST_CASE(checkWrite) {
 	graph.setVertexProperty<1>(2, 3.0);
 
 	expected = "graph G {\n"
-			"{\n"
 			"node [shape=box style=filled]\n"
 			"0 [label=\"prop1=val1,prop2=1\"];\n"
 			"1 [label=\"prop1=val2,prop2=2\"];\n"
 			"2 [label=\"prop1=val3,prop2=3\"];\n"
-			"}\n"
-			"0--1 ;\n"
-			"1--2 ;\n"
-			"2--0 ;\n"
+			"0--1 [label=\"weight=2.000000\"];\n"
+			"1--2 [label=\"weight=3.000000\"];\n"
+			"2--0 [label=\"weight=1.000000\"];\n"
 			"}";
 
 	std::stringstream ss3;
@@ -335,15 +331,13 @@ BOOST_AUTO_TEST_CASE(checkWrite) {
 
 
 	expected = "graph G {\n"
-			"{\n"
 			"node [shape=box style=filled]\n"
 			"0 [label=\"prop1=[1 2]\"];\n"
 			"1 [label=\"prop1=[1 2]\"];\n"
 			"2 [label=\"prop1=[1 2]\"];\n"
-			"}\n"
-			"0--1 ;\n"
-			"1--2 ;\n"
-			"2--0 ;\n"
+			"0--1 [label=\"weight=2.000000\"];\n"
+			"1--2 [label=\"weight=3.000000\"];\n"
+			"2--0 [label=\"weight=1.000000\"];\n"
 			"}";
 
 	std::stringstream ss4;

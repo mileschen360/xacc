@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['accelerator',['Accelerator',['../a01087.html',1,'xacc']]],
-  ['acceleratorbit',['AcceleratorBit',['../a01095.html',1,'xacc']]],
-  ['acceleratorbuffer',['AcceleratorBuffer',['../a01099.html',1,'xacc']]],
-  ['algorithmgenerator',['AlgorithmGenerator',['../a01119.html',1,'xacc']]],
-  ['allgatevisitor',['AllGateVisitor',['../a01059.html',1,'xacc::quantum']]]
+  ['accelerator',['Accelerator',['../a00011.html',1,'xacc']]],
+  ['acceleratorbit',['AcceleratorBit',['../a00012.html',1,'xacc']]],
+  ['acceleratorbuffer',['AcceleratorBuffer',['../a00013.html',1,'xacc']]],
+  ['algorithmgenerator',['AlgorithmGenerator',['../a00014.html',1,'xacc']]],
+  ['allgatevisitor',['AllGateVisitor',['../a00015.html',1,'xacc::quantum']]],
+  ['aqcacceleratorbuffer',['AQCAcceleratorBuffer',['../a00016.html',1,'xacc::quantum']]]
 ];

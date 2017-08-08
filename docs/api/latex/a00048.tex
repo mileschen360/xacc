@@ -1,57 +1,48 @@
-\hypertarget{a00048}{}\section{xacc\+:\+:quantum\+:\+:Qasm\+To\+Graph Class Reference}
-\label{a00048}\index{xacc\+::quantum\+::\+Qasm\+To\+Graph@{xacc\+::quantum\+::\+Qasm\+To\+Graph}}
+\hypertarget{a00048}{}\section{xacc\+:\+:Instruction\+Visitor$<$ T $>$ Class Template Reference}
+\label{a00048}\index{xacc\+::\+Instruction\+Visitor$<$ T $>$@{xacc\+::\+Instruction\+Visitor$<$ T $>$}}
 
 
-{\ttfamily \#include $<$Qasm\+To\+Graph.\+hpp$>$}
+{\ttfamily \#include $<$Instruction\+Visitor.\+hpp$>$}
 
-\subsection*{Static Public Member Functions}
+\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static \hyperlink{a00049}{Quantum\+Circuit} \hyperlink{a00048_afb1504dc99595be4e15f9094bce1656c}{get\+Circuit\+Graph} (const std\+::string \&flat\+Qasm\+Str)
+virtual void \hyperlink{a00048_af0fead298f5bfbb8e6680433063e2c4b}{visit} (T \&)=0
 \item 
-static void \hyperlink{a00048_a902304cac3a5a6126b982e9dc9585428}{link\+Conditional\+Qasm} (\hyperlink{a00049}{Quantum\+Circuit} \&main\+Graph, std\+::vector$<$ \hyperlink{a00049}{Quantum\+Circuit} $>$ \&conditional\+Graphs, std\+::vector$<$ int $>$ \&conditional\+Qubits)
+virtual \hyperlink{a00048_adf624df25964d0be1a56af58639c9e1d}{$\sim$\+Instruction\+Visitor} ()
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-The \hyperlink{a00048}{Qasm\+To\+Graph} class provides a static utility method that maps a flat qasm string to a Q\+CI Common \hyperlink{a00035}{Graph} data structure. 
+\subsubsection*{template$<$class T$>$\\*
+class xacc\+::\+Instruction\+Visitor$<$ T $>$}
+
+The \hyperlink{a00048}{Instruction\+Visitor} provides a visit method for the provided template parameter. 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{xacc\+::\+Instruction\+Visitor@{xacc\+::\+Instruction\+Visitor}!````~Instruction\+Visitor@{$\sim$\+Instruction\+Visitor}}
+\index{````~Instruction\+Visitor@{$\sim$\+Instruction\+Visitor}!xacc\+::\+Instruction\+Visitor@{xacc\+::\+Instruction\+Visitor}}
+\subsubsection[{\texorpdfstring{$\sim$\+Instruction\+Visitor()}{~InstructionVisitor()}}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class T$>$ virtual {\bf xacc\+::\+Instruction\+Visitor}$<$ T $>$\+::$\sim${\bf Instruction\+Visitor} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}\hypertarget{a00048_adf624df25964d0be1a56af58639c9e1d}{}\label{a00048_adf624df25964d0be1a56af58639c9e1d}
+The destructor 
 
 \subsection{Member Function Documentation}
-\index{xacc\+::quantum\+::\+Qasm\+To\+Graph@{xacc\+::quantum\+::\+Qasm\+To\+Graph}!get\+Circuit\+Graph@{get\+Circuit\+Graph}}
-\index{get\+Circuit\+Graph@{get\+Circuit\+Graph}!xacc\+::quantum\+::\+Qasm\+To\+Graph@{xacc\+::quantum\+::\+Qasm\+To\+Graph}}
-\subsubsection[{\texorpdfstring{get\+Circuit\+Graph(const std\+::string \&flat\+Qasm\+Str)}{getCircuitGraph(const std::string \&flatQasmStr)}}]{\setlength{\rightskip}{0pt plus 5cm}static {\bf Quantum\+Circuit} xacc\+::quantum\+::\+Qasm\+To\+Graph\+::get\+Circuit\+Graph (
+\index{xacc\+::\+Instruction\+Visitor@{xacc\+::\+Instruction\+Visitor}!visit@{visit}}
+\index{visit@{visit}!xacc\+::\+Instruction\+Visitor@{xacc\+::\+Instruction\+Visitor}}
+\subsubsection[{\texorpdfstring{visit(\+T \&)=0}{visit(T \&)=0}}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class T$>$ virtual void {\bf xacc\+::\+Instruction\+Visitor}$<$ T $>$\+::visit (
 \begin{DoxyParamCaption}
-\item[{const std\+::string \&}]{flat\+Qasm\+Str}
+\item[{T \&}]{}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\hypertarget{a00048_afb1504dc99595be4e15f9094bce1656c}{}\label{a00048_afb1504dc99595be4e15f9094bce1656c}
-Create a \hyperlink{a00035}{Graph} data structure that models a quantum circuit from the provided qasm string.
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}\hypertarget{a00048_af0fead298f5bfbb8e6680433063e2c4b}{}\label{a00048_af0fead298f5bfbb8e6680433063e2c4b}
+This method should be implemented by subclasses to perform Visitor-\/specific behavior on the given instance of the template parameter T. 
 
+Implemented in \hyperlink{a00026_a9c40e6cb4b74e2d6714c531ffc3b2909}{xacc\+::quantum\+::\+Count\+Gates\+Of\+Type\+Visitor$<$ Gate\+Type $>$}.
 
-\begin{DoxyParams}{Parameters}
-{\em flat\+Qasm\+Str} & The qasm to be converted to a \hyperlink{a00035}{Graph}. \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-graph \hyperlink{a00035}{Graph} modeling a quantum circuit. 
-\end{DoxyReturn}
-\index{xacc\+::quantum\+::\+Qasm\+To\+Graph@{xacc\+::quantum\+::\+Qasm\+To\+Graph}!link\+Conditional\+Qasm@{link\+Conditional\+Qasm}}
-\index{link\+Conditional\+Qasm@{link\+Conditional\+Qasm}!xacc\+::quantum\+::\+Qasm\+To\+Graph@{xacc\+::quantum\+::\+Qasm\+To\+Graph}}
-\subsubsection[{\texorpdfstring{link\+Conditional\+Qasm(\+Quantum\+Circuit \&main\+Graph, std\+::vector$<$ Quantum\+Circuit $>$ \&conditional\+Graphs, std\+::vector$<$ int $>$ \&conditional\+Qubits)}{linkConditionalQasm(QuantumCircuit \&mainGraph, std::vector< QuantumCircuit > \&conditionalGraphs, std::vector< int > \&conditionalQubits)}}]{\setlength{\rightskip}{0pt plus 5cm}static void xacc\+::quantum\+::\+Qasm\+To\+Graph\+::link\+Conditional\+Qasm (
-\begin{DoxyParamCaption}
-\item[{{\bf Quantum\+Circuit} \&}]{main\+Graph, }
-\item[{std\+::vector$<$ {\bf Quantum\+Circuit} $>$ \&}]{conditional\+Graphs, }
-\item[{std\+::vector$<$ int $>$ \&}]{conditional\+Qubits}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\hypertarget{a00048_a902304cac3a5a6126b982e9dc9585428}{}\label{a00048_a902304cac3a5a6126b982e9dc9585428}
-Create connecting conditional nodes that link the main circuit graph to subsequent conditional graphs. The conditional nodes can be used by Accelerators to figure out if the condition code should be executed or not. s 
-\begin{DoxyParams}{Parameters}
-{\em main\+Graph} & \\
-\hline
-{\em conditional\+Graphs} & \\
-\hline
-\end{DoxyParams}
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-Qasm\+To\+Graph.\+hpp\end{DoxyCompactItemize}
+Instruction\+Visitor.\+hpp\end{DoxyCompactItemize}

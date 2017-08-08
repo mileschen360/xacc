@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['measure',['Measure',['../a01023.html',1,'xacc::quantum']]]
+  ['measure',['Measure',['../a00055.html',1,'xacc::quantum']]]
 ];

@@ -86,12 +86,13 @@ public:
 		return "Scaffold";
 	}
 
-	/**
-	 * Register this Compiler with the framework.
-	 */
-	static void registerCompiler() {
-		xacc::RegisterCompiler<xacc::quantum::ScaffoldCompiler> Scaffold(
-				"scaffold");
+	virtual const std::string name() const {
+		return "scaffold";
+	}
+
+	virtual const std::string description() const {
+		return "The Scaffold Compiler wraps the Scaffold "
+				"LLVM tools for compiling quantum programs.";
 	}
 
 	/**
@@ -113,9 +114,6 @@ protected:
 	std::shared_ptr<ScaffoldASTConsumer> consumer;
 
 };
-
-// Create an alias to search for.
-RegisterCompiler(xacc::quantum::ScaffoldCompiler)
 
 }
 

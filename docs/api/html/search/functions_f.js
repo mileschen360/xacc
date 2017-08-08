@@ -1,6 +1,13 @@
 var searchData=
 [
-  ['toassemblystring',['toAssemblyString',['../a00963.html#ac19ad098d5bbfe769809c10e26ebebc6',1,'xacc::quantum::DWaveIR::toAssemblyString()'],['../a01003.html#a7153f7e9f516d43af3d5d4f95d60bd86',1,'xacc::quantum::GateQIR::toAssemblyString()'],['../a01151.html#a8356cdff1919b88eabeb84fd7450cdb6',1,'xacc::IR::toAssemblyString()']]],
-  ['tostring',['toString',['../a00987.html#aa1950776ae84bad2d0795a0441f910e7',1,'xacc::quantum::GateFunction::toString()'],['../a00991.html#a089a5da67ff40ac1a6f56e64589822d9',1,'xacc::quantum::GateInstruction::toString()'],['../a01011.html#aca7a5f849fece6fc28a904efee9a3370',1,'xacc::quantum::ConditionalFunction::toString()'],['../a01023.html#a1c51a5d68294dcb2ba1a9fbea63a730f',1,'xacc::quantum::Measure::toString()'],['../a01131.html#ae94c2d089908294c1d410b14c96817ae',1,'xacc::Instruction::toString()']]],
-  ['translate',['translate',['../a00911.html#a66ca00bbb1f30e7bc6dd86b1e267b93b',1,'xacc::quantum::QuilCompiler::translate()'],['../a00935.html#ac7ca2941e987ba579c6f50cfbd7fb0dc',1,'xacc::quantum::ScaffoldCompiler::translate()'],['../a00947.html#a73a8839c55d22c68e5264feca8d626d4',1,'xacc::quantum::DWaveCompiler::translate()'],['../a01103.html#aeedbe58a33fed29e4d7694ae743e25e7',1,'xacc::Compiler::translate()']]]
+  ['setedgeweight',['setEdgeWeight',['../a00043.html#aaf1edd0f038f6cca1c3c9ece35d3ec05',1,'xacc::Graph']]],
+  ['setembedding',['setEmbedding',['../a00016.html#a23992d11bdb6f093c0ce3f743677d4d9',1,'xacc::quantum::AQCAcceleratorBuffer']]],
+  ['setparameter',['setParameter',['../a00032.html#adf89cdd1f54e183c4cff36b338b2be8d',1,'xacc::quantum::DWKernel::setParameter()'],['../a00033.html#a194b5b9f58262774fde0285f4c3f60af',1,'xacc::quantum::DWQMI::setParameter()'],['../a00040.html#ab8d9789b46e92e27a9d7c9c5b7e3683c',1,'xacc::quantum::GateFunction::setParameter()'],['../a00041.html#afb8f7582d7520c77d61b9016753f5669',1,'xacc::quantum::GateInstruction::setParameter()'],['../a00046.html#a407a0ac662fa0b1ec3e301e8ff9bade7',1,'xacc::Instruction::setParameter()']]],
+  ['setstate',['setState',['../a00080.html#a8cd74c239c1fcecb3d03d6989732d5fe',1,'xacc::quantum::SimulatedQubits']]],
+  ['setvertexproperties',['setVertexProperties',['../a00043.html#abe79a4cb96d48abcd03df01dae73fcc3',1,'xacc::Graph']]],
+  ['setvertexproperty',['setVertexProperty',['../a00043.html#aeeb65835e8a16ebba34da08ea8016fac',1,'xacc::Graph']]],
+  ['simulatedqubits',['SimulatedQubits',['../a00080.html#abb0419229628210a1c187b76be6edc30',1,'xacc::quantum::SimulatedQubits::SimulatedQubits(const std::string &amp;str, const int N)'],['../a00080.html#ae11d09c17316adb09b93cc866969dba8',1,'xacc::quantum::SimulatedQubits::SimulatedQubits(const std::string &amp;str, int firstIndex, Indices...indices)']]],
+  ['singleton',['Singleton',['../a00081.html#afd62caabc41babdd98ab9af2253ec371',1,'xacc::Singleton']]],
+  ['size',['size',['../a00043.html#ae3138d390f1d1c7d335144b59df2ddac',1,'xacc::Graph::size()'],['../a00070.html#a2352dd7c6c85ae5c5e232b577dfa2544',1,'xacc::Registry::size()']]],
+  ['storebuffer',['storeBuffer',['../a00011.html#ac3e781f42ec25e460174d4c41ea26b94',1,'xacc::Accelerator']]]
 ];

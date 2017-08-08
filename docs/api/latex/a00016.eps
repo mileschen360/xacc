@@ -5,7 +5,7 @@
 %%For: 
 %Magnification: 1.00
 %%Orientation: Portrait
-%%BoundingBox: 0 0 500 52.816901
+%%BoundingBox: 0 0 500 170.212766
 %%Pages: 0
 %%BeginSetup
 %%EndSetup
@@ -19,13 +19,13 @@
 /marginwidth 10 def
 /distx 20 def
 /disty 40 def
-/boundaspect 9.466666 def  % aspect ratio of the BoundingBox (width/height)
+/boundaspect 2.937500 def  % aspect ratio of the BoundingBox (width/height)
 /boundx 500 def
 /boundy boundx boundaspect div def
 /xspacing 0 def
 /yspacing 0 def
-/rows 3 def
-/cols 4 def
+/rows 2 def
+/cols 1 def
 /scalefactor 0 def
 /boxfont /Times-Roman findfont fontheight scalefont def
 
@@ -173,13 +173,8 @@
 
 boxfont setfont
 1 boundaspect scale
-(xacc::BaseInstructionVisitor) cw
-(CountGateVisitor< GateType >) cw
-(TestVisitor) cw
-(xacc::quantum::AllGateVisitor) cw
-(xacc::quantum::FunctionalGateInstructionVisitor) cw
-(xacc::quantum::JsonVisitor) cw
-(xacc::quantum::QuilVisitor) cw
+(xacc::quantum::AQCAcceleratorBuffer) cw
+(xacc::AcceleratorBuffer) cw
 /boxwidth boxwidth marginwidth 2 mul add def
 /xspacing boxwidth distx add def
 /yspacing boxheight disty add def
@@ -191,33 +186,12 @@ boundx scalefactor div boundy scalefactor div scale
 
 % ----- classes -----
 
- (xacc::BaseInstructionVisitor) 1.000000 2.000000 box
- (CountGateVisitor< GateType >) 0.000000 1.000000 box
- (TestVisitor) 1.000000 1.000000 box
- (xacc::quantum::AllGateVisitor) 2.000000 1.000000 box
- (xacc::quantum::FunctionalGateInstructionVisitor) 1.000000 0.000000 box
- (xacc::quantum::JsonVisitor) 2.000000 0.000000 box
- (xacc::quantum::QuilVisitor) 3.000000 0.000000 box
+ (xacc::quantum::AQCAcceleratorBuffer) 0.000000 0.000000 box
+ (xacc::AcceleratorBuffer) 0.000000 1.000000 box
 
 % ----- relations -----
 
 solid
-1 1.000000 1.250000 out
+0 0.000000 0.000000 out
 solid
-0.000000 2.000000 2.000000 conn
-solid
-0 0.000000 1.750000 in
-solid
-0 1.000000 1.750000 in
-solid
-0 2.000000 1.750000 in
-solid
-1 2.000000 0.250000 out
-solid
-1.000000 3.000000 1.000000 conn
-solid
-0 1.000000 0.750000 in
-solid
-0 2.000000 0.750000 in
-solid
-0 3.000000 0.750000 in
+1 0.000000 1.000000 in

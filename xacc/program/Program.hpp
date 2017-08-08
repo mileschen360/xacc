@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright (c) 2016, UT-Battelle
+ * Copyright (c) 2017, UT-Battelle
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,8 @@
 #include "Accelerator.hpp"
 #include "RuntimeOptions.hpp"
 #include "Preprocessor.hpp"
+#include "ServiceRegistry.hpp"
+#include "Kernel.hpp"
 
 namespace xacc {
 
@@ -58,12 +60,13 @@ std::vector<IRTransformation> getAcceleratorIndependentTransformations(
 	return transformations;
 }
 
-std::vector<std::shared_ptr<Preprocessor>> getDefaultPreprocessors(AcceleratorType accType) {
+std::vector<std::shared_ptr<Preprocessor>> getDefaultPreprocessors(
+		AcceleratorType accType) {
 	std::vector<std::shared_ptr<Preprocessor>> preprocessors;
-	auto ppRegistry = PreprocessorRegistry::instance();
+	auto preprocessor = ServiceRegistry::instance()->getService<Preprocessor>(
+			"kernel-replacement");
 	if (accType == AcceleratorType::qpu_gate) {
-		preprocessors.push_back(
-				ppRegistry->create("kernel-replacement"));
+		preprocessors.push_back(preprocessor);
 	}
 
 	return preprocessors;
@@ -104,67 +107,6 @@ protected:
 	 */
 	std::shared_ptr<Compiler> compiler;
 
-	/**
-	 * Execute the compilation mechanism on the provided program
-	 * source kernel code to produce XACC IR that can be executed
-	 * on the attached Accelerator.
-	 *
-	 */
-	void build() {
-
-		// Get reference to the runtime options
-		auto runtimeOptions = RuntimeOptions::instance();
-
-		// Get the compiler that has been requested.
-		auto compilerToRun = (*runtimeOptions)["compiler"];
-
-		// Create the appropriate compiler
-		compiler = xacc::CompilerRegistry::instance()->create(compilerToRun);
-
-		// Make sure we got a valid
-		if (!compiler) {
-			XACCError("Invalid Compiler.\n");
-		}
-
-		// Before compiling, run preprocessors
-		auto defaultPPs = getDefaultPreprocessors(accelerator->getType());
-		for (auto preprocessor : defaultPPs) {
-			src = preprocessor->process(src, compiler, accelerator);
-//			std::cout << "Src after process:\n" << src << "\n";
-		}
-
-		XACCInfo("Executing "+ compiler->getName() + " compiler.");
-
-		// Execute the compilation
-		xaccIR = compiler->compile(src, accelerator);
-
-		// Validate the compilation
-		if (!xaccIR) {
-			XACCError("Bad source string or something.\n");
-		}
-
-		// Execute IR Translations
-		auto acceleratorType = accelerator->getType();
-		auto defaultTransforms = getAcceleratorIndependentTransformations(
-				acceleratorType);
-		auto accDepTransforms = accelerator->getIRTransformations();
-		for (IRTransformation& t : defaultTransforms) {
-			t.transform(*xaccIR.get());
-		}
-		for (IRTransformation& t : accDepTransforms) {
-			t.transform(*xaccIR.get());
-		}
-
-		// Write the IR to file if the user requests it
-		if (runtimeOptions->exists("persist-ir")) {
-			auto fileStr = (*runtimeOptions)["persist-ir"];
-			std::ofstream ostr(fileStr);
-			xaccIR->persist(ostr);
-		}
-
-		return;
-	}
-
 public:
 
 	/**
@@ -179,46 +121,108 @@ public:
 	}
 
 	/**
-	 * Return an executable version of the quantum kernel
+	 * The Constructor, takes the Accelerator to execute on,
+	 * and the source kernel string as a stream.
+	 * @param acc Attached Accelerator to execute
+	 * @param stream The file stream containing kernel source code
+	 */
+	Program(std::shared_ptr<Accelerator> acc, std::istream& stream) :
+			accelerator(std::move(acc)), src(
+					std::istreambuf_iterator<char>(stream), { }) {
+	}
+
+	/**
+	 * Execute the compilation mechanism on the provided program
+	 * source kernel code to produce XACC IR that can be executed
+	 * on the attached Accelerator.
+	 */
+	void build() {
+
+		// Get reference to the runtime options
+		auto runtimeOptions = RuntimeOptions::instance();
+
+		// Get the compiler that has been requested.
+		auto compilerToRun = (*runtimeOptions)["compiler"];
+
+		// Create the appropriate compiler
+		compiler = xacc::ServiceRegistry::instance()->getService<Compiler>(
+				compilerToRun);
+
+		// Make sure we got a valid
+		if (!compiler) {
+			XACCError("Invalid Compiler.\n");
+		}
+
+		// Before compiling, run preprocessors
+		auto defaultPPs = getDefaultPreprocessors(accelerator->getType());
+		for (auto preprocessor : defaultPPs) {
+			src = preprocessor->process(src, compiler, accelerator);
+		}
+
+		XACCInfo("Executing "+ compiler->getName() + " compiler.");
+
+		// Execute the compilation
+		xaccIR = compiler->compile(src, accelerator);
+
+		// Validate the compilation
+		if (!xaccIR) {
+			XACCError("Bad source string or something.\n");
+		}
+
+		// Execute hardware dependent IR Transformations
+		auto accTransforms = accelerator->getIRTransformations();
+		for (auto t : accTransforms) {
+			xaccIR = t->transform(xaccIR);
+		}
+
+		// Write the IR to file if the user requests it
+		if (runtimeOptions->exists("persist-ir")) {
+			auto fileStr = (*runtimeOptions)["persist-ir"];
+			std::ofstream ostr(fileStr);
+			xaccIR->persist(ostr);
+		}
+
+		return;
+	}
+
+	/**
+	 * Return an executable version of the kernel
 	 * referenced by the kernelName string.
 	 *
-	 * @param name
-	 * @param args
-	 * @return
+	 * @param name The name of the kernel
+	 * @return kernel The Kernel represented by kernelName
 	 */
 	template<typename ... RuntimeArgs>
-	std::function<void(std::shared_ptr<AcceleratorBuffer>, RuntimeArgs...)> getKernel(
-			const std::string& kernelName) {
+	auto getKernel(
+			const std::string& kernelName) -> Kernel<RuntimeArgs...> {
 
 		// Build the kernel with the appropriate compiler
-		build();
+		if (!xaccIR) {
+			build();
+		}
 
-		// Create a lambda that executes the kernel on the Accelerator.
-		return [=](std::shared_ptr<AcceleratorBuffer> buffer, RuntimeArgs... args) {
+		return Kernel<RuntimeArgs...>(accelerator, xaccIR->getKernel(kernelName));
+	}
 
-			// Get the Function for the Kernel from the IR
-			auto kernel = xaccIR->getKernel(kernelName);
+	/**
+	 * Return all Kernels that have sizeof...(RuntimeArgs)
+	 * InstructionParameters.
+	 * @return kernels Kernels with sizeof...(RuntimeArgs) Parameters.
+	 */
+	template<typename ... RuntimeArgs>
+	auto getKernels() -> std::vector<Kernel<RuntimeArgs...>> {
+		std::vector<Kernel<RuntimeArgs...>> kernels;
+		if (!xaccIR) {
+			build();
+		}
 
-			if (sizeof...(RuntimeArgs) > 0) {
-				// Store the runtime parameters in a tuple
-				auto argsTuple = std::make_tuple(args...);
-
-				// Loop through the tuple, and add InstructionParameters
-				// to the parameters vector.
-				std::vector<InstructionParameter> parameters;
-				xacc::tuple_for_each(argsTuple, [&](auto value) {
-					parameters.push_back(InstructionParameter(value));
-				});
-
-				// Evaluate all Variable Parameters
-				kernel->evaluateVariableParameters(parameters);
+		for (auto k : xaccIR->getKernels()) {
+			if (k->nParameters() == (sizeof...(RuntimeArgs))) {
+				kernels.push_back(Kernel<RuntimeArgs...>(accelerator, k));
 			}
+		}
 
-			// Execute the Kernel on the Accelerator
-			accelerator->execute(buffer, kernel);
-
-			return;
-		};
+		return kernels;
 	}
 };
 

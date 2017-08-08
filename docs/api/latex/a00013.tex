@@ -1,10 +1,10 @@
-\hypertarget{a00013}{}\section{Accelerator\+Buffer Class Reference}
-\label{a00013}\index{Accelerator\+Buffer@{Accelerator\+Buffer}}
+\hypertarget{a00013}{}\section{xacc\+:\+:Accelerator\+Buffer Class Reference}
+\label{a00013}\index{xacc\+::\+Accelerator\+Buffer@{xacc\+::\+Accelerator\+Buffer}}
 
 
 {\ttfamily \#include $<$Accelerator\+Buffer.\+hpp$>$}
 
-Inheritance diagram for Accelerator\+Buffer\+:\begin{figure}[H]
+Inheritance diagram for xacc\+:\+:Accelerator\+Buffer\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[height=2.000000cm]{a00013}
@@ -13,52 +13,70 @@ Inheritance diagram for Accelerator\+Buffer\+:\begin{figure}[H]
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-{\bfseries Accelerator\+Buffer} (const std\+::string \&str)\hypertarget{a00013_a5115079c3f3f8d32e713f78a91c93a7a}{}\label{a00013_a5115079c3f3f8d32e713f78a91c93a7a}
+\hyperlink{a00013_ab606d8af942120d60b51a4fffcd75c98}{Accelerator\+Buffer} (const std\+::string \&str, const int N)
+\item 
+{\footnotesize template$<$typename... Indices$>$ }\\{\bfseries Accelerator\+Buffer} (const std\+::string \&str, int first\+Index, Indices...\+indices)\hypertarget{a00013_ac550d89390562095c56aa1b14ae85001}{}\label{a00013_ac550d89390562095c56aa1b14ae85001}
 
 \item 
-{\bfseries Accelerator\+Buffer} (const std\+::string \&str, const int N)\hypertarget{a00013_a6947082735241791c5170d677042da4a}{}\label{a00013_a6947082735241791c5170d677042da4a}
+int {\bfseries size} ()\hypertarget{a00013_aa2a3101c2e3ae3550172bf49f9587f3b}{}\label{a00013_aa2a3101c2e3ae3550172bf49f9587f3b}
 
 \item 
-{\footnotesize template$<$typename... Indices$>$ }\\{\bfseries Accelerator\+Buffer} (const std\+::string \&str, int first\+Index, Indices...\+indices)\hypertarget{a00013_afe8b2a7e0b7b7992f45fe7021d106b66}{}\label{a00013_afe8b2a7e0b7b7992f45fe7021d106b66}
+std\+::string {\bfseries name} ()\hypertarget{a00013_ad5b646e9efc21b6d0bcc22cd6f649c22}{}\label{a00013_ad5b646e9efc21b6d0bcc22cd6f649c22}
 
 \item 
-int {\bfseries size} ()\hypertarget{a00013_a249eae9f3b83072e5b101ba23f900e81}{}\label{a00013_a249eae9f3b83072e5b101ba23f900e81}
+void {\bfseries reset\+Buffer} ()\hypertarget{a00013_aa6d6e9cfee6170333c1f03507345743f}{}\label{a00013_aa6d6e9cfee6170333c1f03507345743f}
 
 \item 
-std\+::string {\bfseries name} ()\hypertarget{a00013_a3373218e4d430d061ba75135bf14ede3}{}\label{a00013_a3373218e4d430d061ba75135bf14ede3}
+void {\bfseries update\+Bit} (const int idx, int zero\+Or\+One)\hypertarget{a00013_a4bc0edbe9aa0d463f67ddcc38265066f}{}\label{a00013_a4bc0edbe9aa0d463f67ddcc38265066f}
 
 \item 
-void {\bfseries reset\+Buffer} ()\hypertarget{a00013_aa5080c9a975871858b39d3394e867e77}{}\label{a00013_aa5080c9a975871858b39d3394e867e77}
+void {\bfseries append\+Measurement} (const boost\+::dynamic\+\_\+bitset$<$$>$ \&measurement)\hypertarget{a00013_ac161c4f984f774d08197871094aabc67}{}\label{a00013_ac161c4f984f774d08197871094aabc67}
 
 \item 
-void {\bfseries update\+Bit} (const int idx, int zero\+Or\+One)\hypertarget{a00013_a689855524e630049db6120a1493a3c45}{}\label{a00013_a689855524e630049db6120a1493a3c45}
+double {\bfseries get\+Average} () const \hypertarget{a00013_a97cf3cc4e1aaa8ac3cee7817860f77c1}{}\label{a00013_a97cf3cc4e1aaa8ac3cee7817860f77c1}
 
 \item 
-Accelerator\+Bit\+State {\bfseries get\+Accelerator\+Bit\+State} (const int idx)\hypertarget{a00013_a29ece4f7b671308b89c06f3ac8e74b9e}{}\label{a00013_a29ece4f7b671308b89c06f3ac8e74b9e}
+Accelerator\+Bit\+State {\bfseries get\+Accelerator\+Bit\+State} (const int idx)\hypertarget{a00013_aba6ef359f3117faa98f0eb8da90d909e}{}\label{a00013_aba6ef359f3117faa98f0eb8da90d909e}
 
 \item 
-virtual void {\bfseries print} ()\hypertarget{a00013_a3776733a3196bca276988d4cc50a135a}{}\label{a00013_a3776733a3196bca276988d4cc50a135a}
+virtual void {\bfseries print} ()\hypertarget{a00013_add0835e188f0eda4f1b68a28ddc79786}{}\label{a00013_add0835e188f0eda4f1b68a28ddc79786}
 
 \item 
-virtual void {\bfseries print} (std\+::ostream \&stream)\hypertarget{a00013_a6f2cf905960a528fc829904a3c176c6e}{}\label{a00013_a6f2cf905960a528fc829904a3c176c6e}
+virtual void {\bfseries print} (std\+::ostream \&stream)\hypertarget{a00013_a7c59462451223772b41ef232b06a7dfa}{}\label{a00013_a7c59462451223772b41ef232b06a7dfa}
 
 \end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
-std\+::string {\bfseries buffer\+Id}\hypertarget{a00013_adca17dc5025c067a927aefd6a5cbe51b}{}\label{a00013_adca17dc5025c067a927aefd6a5cbe51b}
+std\+::vector$<$ boost\+::dynamic\+\_\+bitset$<$$>$ $>$ {\bfseries measurements}\hypertarget{a00013_a5464b23a964985df2547f657877c9ea5}{}\label{a00013_a5464b23a964985df2547f657877c9ea5}
 
 \item 
-std\+::vector$<$ \hyperlink{a00012}{Accelerator\+Bit} $>$ {\bfseries bits}\hypertarget{a00013_a36b3300cbada4e54e9e68d1c7c135c9b}{}\label{a00013_a36b3300cbada4e54e9e68d1c7c135c9b}
+std\+::string {\bfseries buffer\+Id}\hypertarget{a00013_a3198e034d07d9b77b62da03e6592a221}{}\label{a00013_a3198e034d07d9b77b62da03e6592a221}
+
+\item 
+std\+::vector$<$ \hyperlink{a00012}{Accelerator\+Bit} $>$ {\bfseries bits}\hypertarget{a00013_ab6dbb8c22f8adc6aba34b00a84066854}{}\label{a00013_ab6dbb8c22f8adc6aba34b00a84066854}
 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
+The \hyperlink{a00013}{Accelerator\+Buffer} models an allocated buffer of bits that are operated on by a kernel. As such, the \hyperlink{a00013}{Accelerator\+Buffer}\textquotesingle{}s primary role is to store \hyperlink{a00011}{Accelerator} execution results.
+
 \begin{DoxyAuthor}{Author}
 Alex Mc\+Caskey 
 \end{DoxyAuthor}
 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{xacc\+::\+Accelerator\+Buffer@{xacc\+::\+Accelerator\+Buffer}!Accelerator\+Buffer@{Accelerator\+Buffer}}
+\index{Accelerator\+Buffer@{Accelerator\+Buffer}!xacc\+::\+Accelerator\+Buffer@{xacc\+::\+Accelerator\+Buffer}}
+\subsubsection[{\texorpdfstring{Accelerator\+Buffer(const std\+::string \&str, const int N)}{AcceleratorBuffer(const std::string \&str, const int N)}}]{\setlength{\rightskip}{0pt plus 5cm}xacc\+::\+Accelerator\+Buffer\+::\+Accelerator\+Buffer (
+\begin{DoxyParamCaption}
+\item[{const std\+::string \&}]{str, }
+\item[{const int}]{N}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{a00013_ab606d8af942120d60b51a4fffcd75c98}{}\label{a00013_ab606d8af942120d60b51a4fffcd75c98}
+The Constructor 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

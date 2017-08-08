@@ -80,6 +80,7 @@ public:
 struct DefaultEdge {
 	double weight = 0.0;
 };
+typedef boost::property<boost::edge_weight_t, double> EdgeWeightProperty;
 
 enum GraphType {
 	Undirected, Directed
@@ -137,10 +138,10 @@ class Graph {
 	using graph_type = typename std::conditional<(type == GraphType::Undirected), undirectedS, directedS>::type;
 
 	// Setup some easy to use aliases
-	using adj_list = adjacency_list<vecS, vecS, graph_type, Vertex, DefaultEdge>;
+	using adj_list = adjacency_list<vecS, vecS, graph_type, Vertex, EdgeWeightProperty>;
 	using BoostGraph = std::shared_ptr<adj_list>;
-	using vertex_type = typename boost::graph_traits<adjacency_list<vecS, vecS, undirectedS, Vertex, DefaultEdge>>::vertex_descriptor;
-	using edge_type = typename boost::graph_traits<adjacency_list<vecS, vecS, undirectedS, Vertex, DefaultEdge>>::edge_descriptor;
+	using vertex_type = typename boost::graph_traits<adjacency_list<vecS, vecS, undirectedS, Vertex, EdgeWeightProperty>>::vertex_descriptor;
+	using edge_type = typename boost::graph_traits<adjacency_list<vecS, vecS, undirectedS, Vertex, EdgeWeightProperty>>::edge_descriptor;
 
 protected:
 
@@ -228,9 +229,12 @@ public:
 		auto edgeBoolPair = add_edge(vertex(srcIndex, *_graph.get()),
 				vertex(tgtIndex, *_graph.get()), *_graph.get());
 		if (!edgeBoolPair.second) {
-
+			XACCError("Failed to add an edge between " + std::to_string(srcIndex) + " and " + std::to_string(tgtIndex));
 		}
-		(*_graph.get())[edgeBoolPair.first].weight = edgeWeight;
+
+		boost::put(boost::edge_weight_t(), *_graph.get(), edgeBoolPair.first, edgeWeight);
+//		(*_graph.get())[edgeBoolPair.first].weight = edgeWeight;
+//		std::cout << "EDGE WEIGHT SET\n";
 	}
 
 	/**
@@ -245,6 +249,12 @@ public:
 				vertex(tgtIndex, *_graph.get()), *_graph.get());
 	}
 
+	void removeEdge(const int srcIndex, const int tgtIndex) {
+		auto v = vertex(srcIndex, *_graph.get());
+		auto u = vertex(tgtIndex, *_graph.get());
+		remove_edge(v, u, *_graph.get());
+
+	}
 	/**
 	 * Add a vertex to this Graph.
 	 */
@@ -328,7 +338,8 @@ public:
 	 */
 	void setEdgeWeight(const int srcIndex, const int tgtIndex, const double weight) {
 		auto e = edge(vertex(srcIndex, *_graph.get()), vertex(tgtIndex, *_graph.get()), *_graph.get());
-		(*_graph.get())[e.first].weight = weight;
+		boost::put(boost::edge_weight_t(), *_graph.get(), e.first, weight);
+//		(*_graph.get())[e.first].weight = weight;
 	}
 
 	/**
@@ -341,7 +352,12 @@ public:
 	 */
 	double getEdgeWeight(const int srcIndex, const int tgtIndex) {
 		auto e = edge(vertex(srcIndex, *_graph.get()), vertex(tgtIndex, *_graph.get()), *_graph.get());
-		return (*_graph.get())[e.first].weight;
+		if (e.second) {
+			auto weight = get(boost::edge_weight_t(), *_graph.get(), e.first);
+			return weight;
+		} else {
+			return 0.0;
+		}
 	}
 
 	/**
@@ -353,8 +369,10 @@ public:
 	 * @return exists Boolean indicating if edge exists or not
 	 */
 	bool edgeExists(const int srcIndex, const int tgtIndex) {
-		return edge(vertex(srcIndex, *_graph.get()),
-				vertex(tgtIndex, *_graph.get()), *_graph.get()).second;
+		auto v1 = vertex(srcIndex, *_graph.get());
+		auto v2 = vertex(tgtIndex, *_graph.get());
+		auto p = edge(v1, v2, *_graph.get());
+		return p.second;
 	}
 
 	/**
@@ -414,6 +432,26 @@ public:
 		return num_vertices(*_graph.get());
 	}
 
+	std::list<int> getNeighborList(const int index) {
+		std::list<int> l;
+
+		typedef typename boost::property_map<adj_list, boost::vertex_index_t>::type IndexMap;
+		IndexMap indexMap = get(boost::vertex_index, *_graph.get());
+
+		typedef typename boost::graph_traits<adj_list>::adjacency_iterator adjacency_iterator;
+
+		std::pair<adjacency_iterator, adjacency_iterator> neighbors =
+				boost::adjacent_vertices(vertex(index, *_graph.get()),
+						*_graph.get());
+
+		for (; neighbors.first != neighbors.second; ++neighbors.first) {
+//			std::cout << indexMap[*neighbors.first] << " ";
+			int neighborIdx = indexMap[*neighbors.first];
+			l.push_back(neighborIdx);
+		}
+
+		return l;
+	}
 	/**
 	 * Write this graph in a graphviz dot format to the
 	 * provided ostream.
@@ -426,12 +464,29 @@ public:
 		boost::write_graphviz(ss, *_graph.get(), writer);
 		auto str = ss.str();
 		// Modify the style...
-		str = str.insert(9, "\n{\nnode [shape=box style=filled]");
+		str = str.insert(9, "\nnode [shape=box style=filled]");
 
 		std::vector<std::string> splitVec;
 		boost::split(splitVec, str, boost::is_any_of("\n"));
-		splitVec.insert(splitVec.begin() + 3 + order(), "}");
+		splitVec.insert(splitVec.begin() + 2 + order(), "}\n");
 
+//		std::cout << "HELLO:\n " << str << "\n";
+		for (auto s : splitVec) {
+			if (boost::contains(s, "--")) {
+				// THis is an edge
+				std::vector<std::string> splitEdge;
+				boost::split(splitEdge, s, boost::is_any_of("--"));
+				auto e1Str = splitEdge[0];
+				auto e2Str = splitEdge[2].substr(0, splitEdge[2].size() - 2);
+				auto e1Idx = std::stod(e1Str);
+				auto e2Idx = std::stod(e2Str);
+				auto news = e1Str + "--" + e2Str + " [label=\"weight=" + std::to_string(getEdgeWeight(e1Idx, e2Idx))+ "\"];";
+				boost::replace_all(str, s, news);
+			}
+		}
+
+		splitVec.clear();
+		boost::split(splitVec, str, boost::is_any_of("\n"));
 		std::stringstream combine;
 		std::for_each(splitVec.begin(), splitVec.end(), [&](const std::string& elem) { combine << elem << "\n"; });
 		stream << combine.str().substr(0, combine.str().size() - 2);

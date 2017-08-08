@@ -29,43 +29,31 @@
 #
 #**********************************************************************************/
 
-find_package(OpenSSL)
+include_directories(${CMAKE_SOURCE_DIR}/tpls/rapidjson/include)
 
-if (OPENSSL_FOUND)
-
-   include_directories(${CMAKE_SOURCE_DIR}/tpls/rapidjson/include)
-
-   include_directories(${PYTHON_INCLUDE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/tpls/fire/tensors)
+include_directories(${CMAKE_SOURCE_DIR}/tpls/fire/tensors/impl)
+include_directories(${CMAKE_SOURCE_DIR}/tpls/fire/tpls/eigen)
    
-   include_directories(${CMAKE_SOURCE_DIR}/tpls/fire/tensors)
-   include_directories(${CMAKE_SOURCE_DIR}/tpls/fire/tensors/impl)
-   include_directories(${CMAKE_SOURCE_DIR}/tpls/fire/tpls/eigen)
+include_directories(${CMAKE_SOURCE_DIR}/quantum/gate/ir)
+include_directories(${CMAKE_SOURCE_DIR}/quantum/gate/utils)
+include_directories(${CMAKE_SOURCE_DIR}/quantum/gate/ir/instructions)
+include_directories(${CMAKE_SOURCE_DIR}/quantum/gate/ir/functions)
+include_directories(${CMAKE_SOURCE_DIR}/tpls/fire/util)
+include_directories(${CMAKE_SOURCE_DIR}/tpls/fire/tpls/simpleweb)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/utils)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/compiler)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/accelerator)
+
+set (PACKAGE_NAME "Rigetti XACC")
+set (PACKAGE_DESCIPTION "Rigetti XACC Plugins")
+set (LIBRARY_NAME xacc-rigetti)
+
+add_subdirectory(compiler)
+add_subdirectory(accelerator)
+add_subdirectory(examples)
+
+# Gather tests
+file (GLOB test_files tests/*.cpp)
+add_tests("${test_files}" "${CMAKE_CURRENT_SOURCE_DIR}" "${Boost_LIBRARIES};xacc-rigetti-accelerator;xacc-rigetti-quilcompiler")
    
-   include_directories(${CMAKE_SOURCE_DIR}/quantum/gate/ir)
-   include_directories(${CMAKE_SOURCE_DIR}/quantum/gate/utils)
-   include_directories(${CMAKE_SOURCE_DIR}/quantum/gate/ir/instructions)
-   include_directories(${CMAKE_SOURCE_DIR}/quantum/gate/ir/functions)
-   include_directories(${CMAKE_SOURCE_DIR}/tpls/fire/util)
-   include_directories(${CMAKE_SOURCE_DIR}/tpls/fire/tpls/simpleweb)
-   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-   set (PACKAGE_NAME "Rigetti XACC Accelerator")
-   set (PACKAGE_DESCIPTION "Rigetti XACC Accelerator Framework")
-   set (LIBRARY_NAME xacc-rigetti)
-
-   file (GLOB_RECURSE HEADERS *.hpp)
-   file (GLOB SRC *.cpp)
-
-   add_library(${LIBRARY_NAME} SHARED ${SRC})
-
-   target_link_libraries(${LIBRARY_NAME} ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES} xacc-quantum-gate ${PYTHON_LIBRARY})
-
-   #install(FILES ${HEADERS} DESTINATION include)
-   install(TARGETS ${LIBRARY_NAME} DESTINATION lib)
-
-   # Gather tests
-   file (GLOB test_files tests/*.cpp)
-   add_tests("${test_files}" "${CMAKE_CURRENT_SOURCE_DIR}" "${Boost_LIBRARIES};xacc-rigetti")
-   
-   add_subdirectory(examples)
-endif()

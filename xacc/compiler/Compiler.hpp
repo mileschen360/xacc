@@ -33,10 +33,9 @@
 
 #include <memory>
 #include <iostream>
-#include "Registry.hpp"
 #include "IR.hpp"
-#include <boost/dll/alias.hpp>
 #include "Accelerator.hpp"
+#include "Identifiable.hpp"
 
 namespace xacc {
 
@@ -48,7 +47,7 @@ namespace xacc {
  * compiler-specific compilation mechanism, and returns a valid
  * XACC IR instance modeling the result of the compilation.
  */
-class Compiler : public OptionsProvider {
+class __attribute__((visibility("default"))) Compiler : public OptionsProvider, public Identifiable {
 
 public:
 
@@ -100,6 +99,10 @@ public:
 		return std::make_shared<options_description>();
 	}
 
+	virtual bool handleOptions(variables_map& map){
+		return false;
+	}
+
 	/**
 	 * The destructor
 	 */
@@ -118,35 +121,6 @@ protected:
 	 */
 	std::shared_ptr<Accelerator> accelerator;
 };
-
-/**
- * Compiler Registry is just an alias for a
- * Registry of Compilers.
- */
-using CompilerRegistry = Registry<Compiler>;
-
-/**
- * RegisterCompiler is a convenience class for
- * registering custom derived Compiler classes.
- *
- * Creators of Compiler subclasses create an instance
- * of this class with their Compiler subclass as the template
- * parameter to register their Compiler with XACC. This instance
- * must be created in the CPP implementation file for the Compiler
- * and at global scope.
- */
-template<typename T>
-class RegisterCompiler {
-public:
-	RegisterCompiler(const std::string& name) {
-		CompilerRegistry::instance()->add(name,
-				(std::function<std::shared_ptr<xacc::Compiler>()>) ([]() {
-					return std::make_shared<T>();
-				}));
-	}
-};
-
-#define RegisterCompiler(TYPE) BOOST_DLL_ALIAS(TYPE::registerCompiler, registerCompiler)
 
 }
 #endif

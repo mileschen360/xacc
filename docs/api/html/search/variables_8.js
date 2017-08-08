@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['qbits',['qbits',['../a00991.html#a2a56be6c2519ea65df4d06f4abae1393',1,'xacc::quantum::GateInstruction']]],
-  ['quilstr',['quilStr',['../a00915.html#afd04300ce4dab03448a09f9bee448ca6',1,'xacc::quantum::QuilVisitor']]]
+  ['instance_5f',['instance_',['../a00081.html#a863885efab9990f06f699567648dfa26',1,'xacc::Singleton']]],
+  ['inststack',['instStack',['../a00047.html#a7af48509e563e8865131692c3b71edf0',1,'xacc::InstructionIterator']]]
 ];

@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['read',['read',['../a01003.html#a26019e2f1e13e64645e29aee86ac58b1',1,'xacc::quantum::GateQIR::read()'],['../a01079.html#af7a7f4a487d493fe8a4ed1f76cefd731',1,'xacc::quantum::QuantumCircuit::read()'],['../a01187.html#abdd3e67dc08c223821d809bc8914164a',1,'xacc::Graph::read()']]],
-  ['registeraccelerator',['registerAccelerator',['../a00919.html#a757d25e0e7fe0f53635b97a97d74265c',1,'xacc::quantum::RigettiAccelerator::registerAccelerator()'],['../a00943.html#a1cfa3381a56ca6f431b4722162ccb63d',1,'xacc::quantum::SimpleAccelerator::registerAccelerator()']]],
-  ['registercompiler',['registerCompiler',['../a00911.html#aaec99a14bede717bf02a0f65af2a3c69',1,'xacc::quantum::QuilCompiler::registerCompiler()'],['../a00935.html#aed16dda1e919e5af6de9953a656f62ce',1,'xacc::quantum::ScaffoldCompiler::registerCompiler()'],['../a00947.html#a5b221649f22a9bb4d4a304a6522d071f',1,'xacc::quantum::DWaveCompiler::registerCompiler()']]],
-  ['removeinstruction',['removeInstruction',['../a00987.html#a44ca35d081577de9ad2930f93c01e89d',1,'xacc::quantum::GateFunction::removeInstruction()'],['../a01127.html#ab6478b09bb28e194bb555b3180737733',1,'xacc::Function::removeInstruction()']]],
-  ['replaceinstruction',['replaceInstruction',['../a00987.html#a182fdfabbf546ae89e4f2384bafb45c9',1,'xacc::quantum::GateFunction::replaceInstruction()'],['../a01127.html#a2ef6a4923a6734f90f6ee3d94d263af0',1,'xacc::Function::replaceInstruction()']]]
+  ['parse',['parse',['../a00021.html#ae6499c8c7da9b4f453757dd86028a14f',1,'xacc::CLIParser']]],
+  ['persist',['persist',['../a00031.html#abcbfd0a4cf697843391c65cbd9a82080',1,'xacc::quantum::DWIR::persist()'],['../a00042.html#a40e1d07e4dfd3794ef53fca3cdbdca61',1,'xacc::quantum::GateQIR::persist()'],['../a00050.html#a414b72224d88473ad6190bb88102a3ea',1,'xacc::IR::persist()']]],
+  ['print',['print',['../a00080.html#a9252d30be0563f36bf1ff839c7104cd7',1,'xacc::quantum::SimulatedQubits::print(std::ostream &amp;stream)'],['../a00080.html#a32922bd2ccc64bba601c07a3c136cc3d',1,'xacc::quantum::SimulatedQubits::print()']]],
+  ['process',['process',['../a00054.html#ad4f9ba1f83ea45ed376f36e3853c668d',1,'xacc::quantum::KernelReplacementPreprocessor::process()'],['../a00057.html#ae59b5a2963f8bcc84b590a83f4749e19',1,'xacc::Preprocessor::process()']]],
+  ['program',['Program',['../a00058.html#a6d20079fde67a3ef145315e762249115',1,'xacc::Program']]]
 ];

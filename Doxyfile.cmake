@@ -855,7 +855,6 @@ EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */eigen/*
 EXCLUDE_PATTERNS += */fire/*
 EXCLUDE_PATTERNS += */rapidjson/*
-EXCLUDE_PATTERNS += */boost-dll/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -871,7 +870,12 @@ EXCLUDE_SYMBOLS        += Fake*
 EXCLUDE_SYMBOLS        += Dummy*
 EXCLUDE_SYMBOLS        += F
 EXCLUDE_SYMBOLS        += TestVisitor
-
+EXCLUDE_SYMBOLS        += is_valid_vertex*
+EXCLUDE_SYMBOLS        += runtime_get*
+EXCLUDE_SYMBOLS        += XACCException
+EXCLUDE_SYMBOLS        += XACCInfoT
+EXCLUDE_SYMBOLS        += int_
+EXCLUDE_SYMBOLS        += Factoring*
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include
@@ -945,7 +949,7 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE = @CMAKE_SOURCE_DIR@/README.md
+USE_MDFILE_AS_MAINPAGE = @CMAKE_SOURCE_DIR@/docs/README.md
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
@@ -1138,7 +1142,8 @@ HTML_STYLESHEET        =
 # list). For an example see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_STYLESHEET  = @CMAKE_CURRENT_SOURCE_DIR@/docs-doxygen/doxygen-bootstrapped/customdoxygen.css
+HTML_EXTRA_STYLESHEET  = 
+#@CMAKE_CURRENT_SOURCE_DIR@/docs-doxygen/doxygen-bootstrapped/customdoxygen.css
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1148,7 +1153,8 @@ HTML_EXTRA_STYLESHEET  = @CMAKE_CURRENT_SOURCE_DIR@/docs-doxygen/doxygen-bootstr
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = @CMAKE_CURRENT_SOURCE_DIR@/docs-doxygen/doxygen-bootstrapped/doxy-boot.js
+HTML_EXTRA_FILES       = 
+#@CMAKE_CURRENT_SOURCE_DIR@/docs-doxygen/doxygen-bootstrapped/doxy-boot.js
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to

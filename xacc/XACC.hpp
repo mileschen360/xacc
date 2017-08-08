@@ -39,11 +39,15 @@
 #include "CLIParser.hpp"
 #include "Program.hpp"
 #include "Preprocessor.hpp"
+#include "ServiceRegistry.hpp"
 
 namespace xacc {
 
-bool xaccFrameworkInitialized = false;
-auto tmpInitConsole = spdlog::stdout_logger_mt("xacc-console");
+// Boolean indicating that framework has been initialized
+extern bool xaccFrameworkInitialized;
+
+// Reference to the command line parser
+extern std::shared_ptr<CLIParser> xaccCLParser;
 
 /**
  * This method should be called by
@@ -51,69 +55,36 @@ auto tmpInitConsole = spdlog::stdout_logger_mt("xacc-console");
  * It should be called before using any of the
  * XACC API.
  */
-void Initialize(int argc, char** argv) {
-	XACCInfo("[xacc] Initializing XACC Framework");
+void Initialize(int argc, char** argv);
 
-	// Get reference to our compiler and accelerator registries
-	auto compilerRegistry = xacc::CompilerRegistry::instance();
-	auto acceleratorRegistry = xacc::AcceleratorRegistry::instance();
-	auto preprocessorRegistry = xacc::PreprocessorRegistry::instance();
+/**
+ * Add a valid command line option
+ */
+void addCommandLineOption(const std::string& optionName,
+		const std::string& optionDescription = "");
 
-	// Parse any user-supplied command line options
-	CLIParser parser(argc, argv);
-	parser.parse();
+/**
+ * Return the Accelerator with given name
+ */
+std::shared_ptr<Accelerator> getAccelerator(const std::string& name);
 
-	// Check that we have some
-	auto s = compilerRegistry->size();
-	auto a = acceleratorRegistry->size();
-	auto ps = preprocessorRegistry->size();
-	if (s == 0) XACCError("There are no Compiler instances available. Exiting.");
-	if (a == 0) XACCError("There are no Accelerator instances available. Exiting.");
+/**
+ * Return the Compiler with given name
+ */
+std::shared_ptr<Compiler> getCompiler(const std::string& name);
 
-	XACCInfo(
-			"[xacc::compiler] XACC has " + std::to_string(s) + " Compiler"
-					+ ((s == 1 || s == 0) ? "" : "s") + " available.");
-	XACCInfo(
-			"[xacc::accelerator] XACC has " + std::to_string(a) + " Accelerator"
-					+ ((s == 0 || s == 1) ? "" : "s") + " available.");
-	XACCInfo(
-			"[xacc::preprocessor] XACC has " + std::to_string(ps) + " Preprocessor"
-					+ ((ps == 0 || ps == 1) ? "" : "s") + " available.");
-
-	// We're good if we make it here, so indicate that we've been
-	// initialized
-	xacc::xaccFrameworkInitialized = true;
-}
-
-std::shared_ptr<Accelerator> getAccelerator(const std::string& name) {
-	if (!xacc::xaccFrameworkInitialized) {
-		XACCError(
-				"XACC not initialized before use. Please execute xacc::Initialize() before using API.");
-	}
-	auto acc = AcceleratorRegistry::instance()->create(name);
-	if (acc) {
-		return acc;
-	} else {
-		XACCError(
-				"Invalid Accelerator. Could not find " + name
-						+ " in Accelerator Registry.");
-	}
-}
+/*
+ * Return the IRTransformation with given name
+ */
+std::shared_ptr<IRTransformation> getIRTransformation(const std::string& name);
 
 /**
  * This method should be called by clients to
  * clean up and finalize the XACC framework. It should
  * be called after using the XACC API.
  */
-void Finalize() {
-	XACCInfo(
-			"\n[xacc] XACC Finalizing\n[xacc::compiler] Cleaning up Compiler Registry."
-					"\n[xacc::accelerator] Cleaning up Accelerator Registry.");
-	xacc::CompilerRegistry::instance()->destroy();
-	xacc::AcceleratorRegistry::instance()->destroy();
-	xacc::PreprocessorRegistry::instance()->destroy();
-	xacc::xaccFrameworkInitialized = false;
-}
+void Finalize();
+
 }
 
 

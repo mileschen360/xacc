@@ -36,6 +36,8 @@
 #include "Accelerator.hpp"
 #include "GateQIR.hpp"
 
+#include "ServiceRegistry.hpp"
+
 using namespace xacc;
 
 using namespace xacc::quantum;
@@ -88,6 +90,15 @@ public:
 		return "Dummy";
 	}
 
+	virtual const std::string name() const {
+		return "";
+	}
+
+	virtual const std::string description() const {
+		return "";
+	}
+
+
 };
 
 class DummyAccelerator : public xacc::Accelerator {
@@ -97,8 +108,12 @@ public:
 		return AcceleratorType::qpu_gate;
 	}
 
-	virtual std::vector<IRTransformation> getIRTransformations() {
-		std::vector<IRTransformation> ts;
+	virtual void initialize() {
+
+	}
+
+	virtual std::vector<std::shared_ptr<IRTransformation>> getIRTransformations() {
+		std::vector<std::shared_ptr<IRTransformation>> ts;
 		return ts;
 	}
 
@@ -114,8 +129,22 @@ public:
 		return b;
 	}
 
+	virtual std::shared_ptr<AcceleratorBuffer> createBuffer(
+				const std::string& varId) {
+			auto b = std::make_shared<AcceleratorBuffer>(varId, 3);
+			storeBuffer(varId, b);
+			return b;
+		}
 	virtual bool isValidBufferSize(const int NBits) {
 		return true;
+	}
+
+	virtual const std::string name() const {
+		return "";
+	}
+
+	virtual const std::string description() const {
+		return "";
 	}
 
 

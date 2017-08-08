@@ -44,7 +44,7 @@ namespace xacc {
  * this code is targeted at.
  *
  */
-class Preprocessor : public OptionsProvider {
+class Preprocessor : public OptionsProvider, public Identifiable {
 public:
 
 	/**
@@ -77,37 +77,12 @@ public:
 		return std::make_shared<options_description>();
 	}
 
+	virtual bool handleOptions(variables_map& map) {
+		return false;
+	}
+
 	~Preprocessor() {}
 };
-
-/**
- * Preprocessor Registry is just an alias for a
- * Registry of Preprocessors.
- */
-using PreprocessorRegistry = Registry<Preprocessor>;
-
-/**
- * RegisterPreprocessor is a convenience class for
- * registering custom derived Preprocessor classes.
- *
- * Creators of Preprocessor subclasses create an instance
- * of this class with their Preprocessor subclass as the template
- * parameter to register their Preprocessor with XACC. This instance
- * must be created in the CPP implementation file for the Preprocessor
- * and at global scope.
- */
-template<typename T>
-class RegisterPreprocessor {
-public:
-	RegisterPreprocessor(const std::string& name) {
-		PreprocessorRegistry::instance()->add(name,
-				(std::function<std::shared_ptr<xacc::Preprocessor>()>) ([]() {
-					return std::make_shared<T>();
-				}));
-	}
-};
-
-#define RegisterPreprocessor(TYPE) BOOST_DLL_ALIAS(TYPE::registerPreprocessor, registerPreprocessor)
 
 }
 

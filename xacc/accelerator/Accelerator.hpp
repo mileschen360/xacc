@@ -38,12 +38,14 @@
 #include <bitset>
 #include "AcceleratorBuffer.hpp"
 #include "IRTransformation.hpp"
-#include "Registry.hpp"
 #include "Function.hpp"
 #include "OptionsProvider.hpp"
-#include <boost/dll/alias.hpp>
+#include "Graph.hpp"
+#include "Identifiable.hpp"
 
 namespace xacc {
+
+using AcceleratorGraph = Graph<XACCVertex<>>;
 
 /**
  * The types of Accelerators that XACC interacts with
@@ -74,9 +76,18 @@ enum AcceleratorType {
  *
  * @author Alex McCaskey
  */
-class Accelerator : public OptionsProvider {
+class __attribute__((visibility("default"))) Accelerator : public OptionsProvider, public Identifiable {
 
 public:
+
+	/**
+	 * Initialize this Accelerator. This method is called
+	 * by the XACC framework after an Accelerator has been
+	 * requested and created. Perform any work you need
+	 * done before execution here.
+	 *
+	 */
+	virtual void initialize() = 0;
 
 	/**
 	 * Return the type of this Accelerator.
@@ -91,7 +102,7 @@ public:
 	 *
 	 * @return transformations The IR transformations this Accelerator exposes
 	 */
-	virtual std::vector<IRTransformation> getIRTransformations() = 0;
+	virtual std::vector<std::shared_ptr<IRTransformation>> getIRTransformations() = 0;
 
 	/**
 	 * Execute the provided XACC IR Function on the provided AcceleratorBuffer.
@@ -101,6 +112,18 @@ public:
 	 */
 	virtual void execute(std::shared_ptr<AcceleratorBuffer> buffer,
 				const std::shared_ptr<Function> function) = 0;
+
+	/**
+	 * Create, store, and return an AcceleratorBuffer with the given
+	 * variable id string. This method returns all available
+	 * qubits for this Accelerator. The string id serves as a unique identifier
+	 * for future lookups and reuse of the AcceleratorBuffer.
+	 *
+	 * @param varId The variable name of the created buffer
+	 * @return buffer The buffer instance created.
+	 */
+	virtual std::shared_ptr<AcceleratorBuffer> createBuffer(
+				const std::string& varId) = 0;
 
 	/**
 	 * Create, store, and return an AcceleratorBuffer with the given
@@ -146,11 +169,24 @@ public:
 	}
 
 	/**
+	 * Return the graph structure for this Accelerator.
+	 *
+	 * @return connectivityGraph The graph structure of this Accelerator
+	 */
+	virtual std::shared_ptr<AcceleratorGraph> getAcceleratorConnectivity() {
+		return std::make_shared<AcceleratorGraph>();
+	}
+
+	/**
 	 * Return an empty options_description, this is for
 	 * subclasses to implement.
 	 */
 	virtual std::shared_ptr<options_description> getOptions() {
 		return std::make_shared<options_description>();
+	}
+
+	virtual bool handleOptions(variables_map& map) {
+		return false;
 	}
 
 	/**
@@ -201,34 +237,6 @@ private:
 	}
 
 };
-
-/**
- * Create an alias for a Registry of Accelerators.
- */
-using AcceleratorRegistry = Registry<Accelerator>;
-
-/**
- * RegisterAccelerator is a convenience class for
- * registering custom derived Accelerator classes.
- *
- * Creators of Accelerator subclasses create an instance
- * of this class with their Accelerator subclass as the template
- * parameter to register their Accelerator with XACC. This instance
- * must be created in the CPP implementation file for the Accelerator
- * and at global scope.
- */
-template<typename T>
-class RegisterAccelerator {
-public:
-	RegisterAccelerator(const std::string& name) {
-		AcceleratorRegistry::instance()->add(name,
-				(std::function<std::shared_ptr<xacc::Accelerator>()>) ([]() {
-					return std::make_shared<T>();
-				}));
-	}
-};
-
-#define RegisterAccelerator(TYPE) BOOST_DLL_ALIAS(TYPE::registerAccelerator, registerAccelerator)
 
 }
 #endif
